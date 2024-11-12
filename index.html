@@ -60,7 +60,7 @@
         td {
             background-color: #f9f9f9;
             font-size: 16px;
-		font-weight: bold;
+            font-weight: bold;
         }
     
         tr:nth-child(even) td {
@@ -86,7 +86,8 @@
     
         .total-summary-row {
             background-color: #f39c12;
-            color: rgb(18, 33, 202);font-weight: bold;
+            color: rgb(18, 33, 202);
+            font-size: 20px;
         }
     
         .total-iva-row {
@@ -324,8 +325,7 @@
                     <td><input type="number" class="qty-distributor" data-price="504.00" value="0" /></td>
                     <td class="total-distributor">Q0.00</td>
                 </tr>
-                                
-
+                
                 <!-- Fila de sumatoria -->
                 <tr class="total-row">
                     <td colspan="3"><strong>Totales</strong></td>
@@ -338,7 +338,7 @@
                     <td class="total-cell" id="sum-qty-distributor">0</td>
                     <td class="total-cell" id="sum-total-distributor">Q0.00</td>
                 </tr>
-
+                
                 <!-- Fila de IVA -->
                 <tr class="total-iva-row">
                     <td colspan="3"><strong>IVA 12%</strong></td>
@@ -350,85 +350,109 @@
                     <td class="total-cell"></td><td class="total-cell"></td>
                     <td class="total-cell" id="iva-total-distributor">Q0.00</td>
                 </tr>
-
+                
                 <!-- Fila de resumen total -->
                 <tr class="total-summary-row">
-                    <td colspan="3"><strong>Total Final</strong></td>
+                    <td colspan="3"><strong style="font-size: 26px;">Total Final</strong></td>
                     <td class="total-cell"></td>
-                    <td class="total-cell" id="final-total">Q0.00</td>
+                    <td class="total-cell" id="final-total" style="font-size: 26px;">Q0.00</td>
                     <td class="total-cell"></td>
                     <td class="total-cell"></td>
-                    <td class="total-cell" id="final-total-wholesale">Q0.00</td>
+                    <td class="total-cell" id="final-total-wholesale" style="font-size: 26px;">Q0.00</td>
                     <td class="total-cell"></td>
-					<td class="total-cell"></td>
-                    <td class="total-cell" id="final-total-distributor">Q0.00</td>
+                    <td class="total-cell"></td>
+                    <td class="total-cell" id="final-total-distributor" style="font-size: 26px;">Q0.00</td>
                 </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <script>
-        // Actualizar los totales
-        const updateTotal = () => {
-            let total = 0;
-            let totalWholesale = 0;
-            let totalDistributor = 0;
-
-            let sumQty = 0;
-            let sumQtyWholesale = 0;
-            let sumQtyDistributor = 0;
-
-            // Para cada fila, obtenemos los valores y calculamos el total
-            document.querySelectorAll('.qty').forEach((input, index) => {
-                const price = parseFloat(input.dataset.price);
-                const qty = parseInt(input.value);
-                const row = input.closest('tr');
-                const totalCell = row.querySelector('.total');
-                const wholesaleInput = row.querySelector('.qty-wholesale');
-                const distributorInput = row.querySelector('.qty-distributor');
-
-                total += price * qty;
-                totalWholesale += parseFloat(wholesaleInput.dataset.price) * parseInt(wholesaleInput.value);
-                totalDistributor += parseFloat(distributorInput.dataset.price) * parseInt(distributorInput.value);
-
-                sumQty += qty;
-                sumQtyWholesale += parseInt(wholesaleInput.value);
-                sumQtyDistributor += parseInt(distributorInput.value);
-
-                totalCell.textContent = `Q${(price * qty).toFixed(2)}`;
-            });
-
-            // Actualizamos las sumas
-            document.getElementById('sum-qty').textContent = sumQty;
-            document.getElementById('sum-total').textContent = `Q${total.toFixed(2)}`;
-            document.getElementById('sum-qty-wholesale').textContent = sumQtyWholesale;
-            document.getElementById('sum-total-wholesale').textContent = `Q${totalWholesale.toFixed(2)}`;
-            document.getElementById('sum-qty-distributor').textContent = sumQtyDistributor;
-            document.getElementById('sum-total-distributor').textContent = `Q${totalDistributor.toFixed(2)}`;
-
-            // Calculamos y actualizamos el IVA
-            const iva = total * 0.12;
-            document.getElementById('iva-total').textContent = `Q${iva.toFixed(2)}`;
-
-            const ivaWholesale = totalWholesale * 0.12;
-            document.getElementById('iva-total-wholesale').textContent = `Q${ivaWholesale.toFixed(2)}`;
-
-            const ivaDistributor = totalDistributor * 0.12;
-            document.getElementById('iva-total-distributor').textContent = `Q${ivaDistributor.toFixed(2)}`;
-
-            // Total final con IVA
-            document.getElementById('final-total').textContent = `Q${(total + iva).toFixed(2)}`;
-            document.getElementById('final-total-wholesale').textContent = `Q${(totalWholesale + ivaWholesale).toFixed(2)}`;
-            document.getElementById('final-total-distributor').textContent = `Q${(totalDistributor + ivaDistributor).toFixed(2)}`;
-        }
-
-        // Agregamos los eventos a los inputs para actualizar los totales cuando cambian
-        document.querySelectorAll('.qty, .qty-wholesale, .qty-distributor').forEach(input => {
-            input.addEventListener('input', updateTotal);
-        });
-
-        // Inicializar los totales
-        updateTotal();
-    </script>
-</body>
-</html>
+                </tbody>
+                </table>
+                </div>
+                
+                <script>
+                // Función para actualizar los totales incluyendo IVA y total final
+                function updateTotals() {
+                    let totalQty = 0;
+                    let totalAmount = 0;
+                    let totalQtyWholesale = 0;
+                    let totalAmountWholesale = 0;
+                    let totalQtyDistributor = 0;
+                    let totalAmountDistributor = 0;
+                
+                    // Tasa de IVA (puedes modificar este valor según corresponda)
+                    const ivaRate = 0.13;  // 13% de IVA
+                
+                    // Iterar sobre cada fila para calcular los totales
+                    document.querySelectorAll('tr').forEach(row => {
+                        let qty = row.querySelector('.qty');
+                        let qtyWholesale = row.querySelector('.qty-wholesale');
+                        let qtyDistributor = row.querySelector('.qty-distributor');
+                
+                        let price = parseFloat(qty ? qty.getAttribute('data-price') : 0);
+                        let priceWholesale = parseFloat(qtyWholesale ? qtyWholesale.getAttribute('data-price') : 0);
+                        let priceDistributor = parseFloat(qtyDistributor ? qtyDistributor.getAttribute('data-price') : 0);
+                
+                        if (qty) {
+                            let qtyValue = parseInt(qty.value) || 0;
+                            let totalValue = qtyValue * price;
+                            row.querySelector('.total').textContent = `Q${totalValue.toFixed(2)}`;
+                            totalQty += qtyValue;
+                            totalAmount += totalValue;
+                        }
+                
+                        if (qtyWholesale) {
+                            let qtyWholesaleValue = parseInt(qtyWholesale.value) || 0;
+                            let totalWholesaleValue = qtyWholesaleValue * priceWholesale;
+                            row.querySelector('.total-wholesale').textContent = `Q${totalWholesaleValue.toFixed(2)}`;
+                            totalQtyWholesale += qtyWholesaleValue;
+                            totalAmountWholesale += totalWholesaleValue;
+                        }
+                
+                        if (qtyDistributor) {
+                            let qtyDistributorValue = parseInt(qtyDistributor.value) || 0;
+                            let totalDistributorValue = qtyDistributorValue * priceDistributor;
+                            row.querySelector('.total-distributor').textContent = `Q${totalDistributorValue.toFixed(2)}`;
+                            totalQtyDistributor += qtyDistributorValue;
+                            totalAmountDistributor += totalDistributorValue;
+                        }
+                    });
+                
+                    // Calcular IVA
+                    let ivaAmount = totalAmount * ivaRate;
+                    let ivaAmountWholesale = totalAmountWholesale * ivaRate;
+                    let ivaAmountDistributor = totalAmountDistributor * ivaRate;
+                
+                    // Calcular total final (con IVA)
+                    let totalFinal = totalAmount + ivaAmount;
+                    let totalFinalWholesale = totalAmountWholesale + ivaAmountWholesale;
+                    let totalFinalDistributor = totalAmountDistributor + ivaAmountDistributor;
+                
+                    // Actualizar las filas de totales
+                    document.getElementById('sum-qty').textContent = totalQty;
+                    document.getElementById('sum-total').textContent = `Q${totalAmount.toFixed(2)}`;
+                    document.getElementById('sum-qty-wholesale').textContent = totalQtyWholesale;
+                    document.getElementById('sum-total-wholesale').textContent = `Q${totalAmountWholesale.toFixed(2)}`;
+                    document.getElementById('sum-qty-distributor').textContent = totalQtyDistributor;
+                    document.getElementById('sum-total-distributor').textContent = `Q${totalAmountDistributor.toFixed(2)}`;
+                    
+                    // Actualizar IVA
+                    document.getElementById('iva-total').textContent = `Q${ivaAmount.toFixed(2)}`;
+                    document.getElementById('iva-total-wholesale').textContent = `Q${ivaAmountWholesale.toFixed(2)}`;
+                    document.getElementById('iva-total-distributor').textContent = `Q${ivaAmountDistributor.toFixed(2)}`;
+                    
+                    // Actualizar total final (con IVA)
+                    document.getElementById('final-total').textContent = `Q${totalFinal.toFixed(2)}`;
+                    document.getElementById('final-total-wholesale').textContent = `Q${totalFinalWholesale.toFixed(2)}`;
+                    document.getElementById('final-total-distributor').textContent = `Q${totalFinalDistributor.toFixed(2)}`;
+                }
+                
+                // Asignar el evento para los inputs de cantidad
+                document.querySelectorAll('.qty, .qty-wholesale, .qty-distributor').forEach(input => {
+                    input.addEventListener('input', updateTotals);
+                });
+                
+                // Llamar a la función al cargar la página para asegurar que los totales estén actualizados
+                window.onload = updateTotals;
+                </script>
+                
+                </body>
+                </html>
+                
