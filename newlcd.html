@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Precios</title>
+    <style>
+        /* Estilos globales */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fc;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+        }
+    
+        h2 {
+            font-size: 28px;
+            color: #2c3e50;
+            text-align: center;
+            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
+        }
+    
+        /* Contenedor principal */
+        .container {
+            width: 100%; /* Se ajusta al 80% del ancho de la pantalla */
+            max-width: 1200px;
+        }
+    
+        /* Estilos para la tabla */
+        table {
+            width: 90%; /* La tabla ocupa el 100% del contenedor */
+            margin-bottom: 20px;
+            border-collapse: collapse; /* Para que las celdas no tengan espacio entre ellas */
+        }
+    
+        th, td {
+            padding: 16px 20px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+    
+        th {
+            background-color: #2980b9;
+            color: #fff;
+            font-weight: bold;
+            font-size: 14px;
+            text-transform: uppercase;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            background-color: #2980b9; /* Fondo del encabezado */
+            box-shadow: 0 2px 2px -2px gray; /* Sombra para separar del contenido */
+        }
+    
+        td {
+            background-color: #f9f9f9;
+            font-size: 14px;
+        }
+    
+        tr:nth-child(even) td {
+            background-color: #f1f1f1;
+        }
+    
+        tr:hover {
+            background-color: #e0f7fa;
+        }
+    
+        /* Estilos para las celdas de totales */
+        .total-row {
+            background-color: #27ae60;
+            color: rgb(4, 0, 0);
+            font-weight: bold;
+        }
+    
+        .total-cell {
+            background-color: #ecf0f1;
+            font-weight: bold;
+            color: #27ae60;
+        }
+    
+        .total-summary-row {
+            background-color: #f39c12;
+            color: rgb(18, 33, 202);
+        }
+    
+        .total-iva-row {
+            background-color: #f2d7d5;
+            color: #c0392b;
+        }
+    
+        /* Estilos para los inputs */
+        input[type="number"] {
+            width: 70px;
+            padding: 8px;
+            text-align: center;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            background-color: #ecf0f1;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+    
+        input[type="number"]:focus {
+            border-color: #2980b9;
+            background-color: #fff;
+            outline: none;
+        }
+    
+        /* Responsividad */
+        @media (max-width: 900px) {
+            table {
+                font-size: 13px;
+            }
+    
+            input[type="number"] {
+                width: 60px;
+            }
+    
+            .container {
+                padding: 15px;
+            }
+        }
+    
+        @media (max-width: 600px) {
+            table {
+                font-size: 12px;
+            }
+    
+            .container {
+                padding: 10px;
+            }
+    
+            td, th {
+                padding: 10px;
+            }
+    
+            input[type="number"] {
+                width: 50px;
+            }
+        }
+    </style>
+    
+</head>
+<body>
+
+    <div class="container">
+        <h2>Calculadora de Precios</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>LINE</th>
+                    <th>MODELO</th>
+                    <th>PRECIO DE VENTA POR UNIDAD</th>
+                    <th>Unidades Deseadas</th>
+                    <th>Monto Total Detalle</th>
+                    <th>PRECIO MAYORISTA (6 a 20 unidades)</th>
+                    <th>Unidades Deseadas</th>
+                    <th>Monto Total Mayorista</th>
+                    <th>PRECIO DISTRIBUIDOR (21 unidades minimo)</th>
+                    <th>Unidades Deseadas</th>
+                    <th>Monto Total Distribuidor</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>ACER UM.QS1AA.002 SA241Y LCD FULL HD 23,8"</td>
+                    <td>Q369.00</td>
+                    <td><input type="number" class="qty" data-price="369.00" value="0" /></td>
+                    <td class="total">Q0.00</td>
+                    <td>Q351.00</td>
+                    <td><input type="number" class="qty-wholesale" data-price="351.00" value="0" /></td>
+                    <td class="total-wholesale">Q0.00</td>
+                    <td>Q314.00</td>
+                    <td><input type="number" class="qty-distributor" data-price="314.00" value="0" /></td>
+                    <td class="total-distributor">Q0.00</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>ONN 24" PULGADAS 1080P VGA HDMI 60HZ 1080p</td>
+                    <td>Q369.00</td>
+                    <td><input type="number" class="qty" data-price="369.00" value="0" /></td>
+                    <td class="total">Q0.00</td>
+                    <td>Q351.00</td>
+                    <td><input type="number" class="qty-wholesale" data-price="351.00" value="0" /></td>
+                    <td class="total-wholesale">Q0.00</td>
+                    <td>Q314.00</td>
+                    <td><input type="number" class="qty-distributor" data-price="314.00" value="0" /></td>
+                    <td class="total-distributor">Q0.00</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>LG 27GQ40W-B ULTRAGEAR 1080p 27" PULGADAS, 1 MS, 165 HZ AMD FREESYNC PREMIUM</td>
+                    <td>Q619.00</td>
+                    <td><input type="number" class="qty" data-price="619.00" value="0" /></td>
+                    <td class="total">Q0.00</td>
+                    <td>Q589.00</td>
+                    <td><input type="number" class="qty-wholesale" data-price="589.00" value="0" /></td>
+                    <td class="total-wholesale">Q0.00</td>
+                    <td>Q527.00</td>
+                    <td><input type="number" class="qty-distributor" data-price="527.00" value="0" /></td>
+                    <td class="total-distributor">Q0.00</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>LG 27MP40W-B SIN BORDES3 1080p IPS 27" PULGADAS AMD FREESYNC</td>
+                    <td>Q481.00</td>
+                    <td><input type="number" class="qty" data-price="481.00" value="0" /></td>
+                    <td class="total">Q0.00</td>
+                    <td>Q457.00</td>
+                    <td><input type="number" class="qty-wholesale" data-price="457.00" value="0" /></td>
+                    <td class="total-wholesale">Q0.00</td>
+                    <td>Q409.00</td>
+                    <td><input type="number" class="qty-distributor" data-price="409.00" value="0" /></td>
+                    <td class="total-distributor">Q0.00</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>MSI G32C4X GAMING 32" PULGADAS CURVO 1080p, 1 MS, 250HZ, FREESYNC, 1500R, HDMI, DP</td>
+                    <td>Q742.00</td>
+                    <td><input type="number" class="qty" data-price="742.00" value="0" /></td>
+                    <td class="total">Q0.00</td>
+                    <td>Q704.00</td>
+                    <td><input type="number" class="qty-wholesale" data-price="704.00" value="0" /></td>
+                    <td class="total-wholesale">Q0.00</td>
+                    <td>Q630.00</td>
+                    <td><input type="number" class="qty-distributor" data-price="630.00" value="0" /></td>
+                    <td class="total-distributor">Q0.00</td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td>ONN 100002480 LCD HD 22" PULGADAS, 1920 X 1080, HDMI, VGA, 60 HZ, 6,5 MS</td>
+                    <td>Q313.00</td>
+                    <td><input type="number" class="qty" data-price="313.00" value="0" /></td>
+                    <td class="total">Q0.00</td>
+                    <td>Q298.00</td>
+                    <td><input type="number" class="qty-wholesale" data-price="298.00" value="0" /></td>
+                    <td class="total-wholesale">Q0.00</td>
+                    <td>Q266.00</td>
+                    <td><input type="number" class="qty-distributor" data-price="266.00" value="0" /></td>
+                    <td class="total-distributor">Q0.00</td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td>ONN 100027813 FREESYNC 1080p 1080P 165 HZ 24 PULGADAS</td>
+                    <td>Q481.00</td>
+                    <td><input type="number" class="qty" data-price="481.00" value="0" /></td>
+                    <td class="total">Q0.00</td>
+                    <td>Q457.00</td>
+                    <td><input type="number" class="qty-wholesale" data-price="457.00" value="0" /></td>
+                    <td class="total-wholesale">Q0.00</td>
+                    <td>Q409.00</td>
+                    <td><input type="number" class="qty-distributor" data-price="409.00" value="0" /></td>
+                    <td class="total-distributor">Q0.00</td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td>SAMSUNG LC27F396FHNXZA SERIE CF396 CURVO 1080p 27" PULGADAS</td>
+                    <td>Q593.00</td>
+                    <td><input type="number" class="qty" data-price="593.00" value="0" /></td>
+                    <td class="total">Q0.00</td>
+                    <td>Q563.00</td>
+                    <td><input type="number" class="qty-wholesale" data-price="563.00" value="0" /></td>
+                    <td class="total-wholesale">Q0.00</td>
+                    <td>Q504.00</td>
+                    <td><input type="number" class="qty-distributor" data-price="504.00" value="0" /></td>
+                    <td class="total-distributor">Q0.00</td>
+                </tr>
+                <tr>
+                    <td>9</td>
+                    <td>SAMSUNG LC32R500FHNXZA CURVO 32" PULGADAS 1080p</td>
+                    <td>Q704.00</td>
+                    <td><input type="number" class="qty" data-price="704.00" value="0" /></td>
+                    <td class="total">Q0.00</td>
+                    <td>Q669.00</td>
+                    <td><input type="number" class="qty-wholesale" data-price="669.00" value="0" /></td>
+                    <td class="total-wholesale">Q0.00</td>
+                    <td>Q599.00</td>
+                    <td><input type="number" class="qty-distributor" data-price="599.00" value="0" /></td>
+                    <td class="total-distributor">Q0.00</td>
+                </tr>
+                <tr>
+                    <td>10</td>
+                    <td>SAMSUNG LF27T350FHNXZA LED 1080p 27" PULGADAS DISEÑO SIN BORDES</td>
+                    <td>Q522.00</td>
+                    <td><input type="number" class="qty" data-price="522.00" value="0" /></td>
+                    <td class="total">Q0.00</td>
+                    <td>Q496.00</td>
+                    <td><input type="number" class="qty-wholesale" data-price="496.00" value="0" /></td>
+                    <td class="total-wholesale">Q0.00</td>
+                    <td>Q444.00</td>
+                    <td><input type="number" class="qty-distributor" data-price="444.00" value="0" /></td>
+                    <td class="total-distributor">Q0.00</td>
+                </tr>
+                <tr>
+                    <td>11</td>
+                    <td>SAMSUNG LS27AG552ENXZA 27" PULGADAS CLASS CURVED ODYSSEY G55A WQHD 165HZ 1MS AMD FREESYNC PREMIUM PARA JUEGOS</td>
+                    <td>Q1,039.00</td>
+                    <td><input type="number" class="qty" data-price="1039.00" value="0" /></td>
+                    <td class="total">Q0.00</td>
+                    <td>Q987.00</td>
+                    <td><input type="number" class="qty-wholesale" data-price="987.00" value="0" /></td>
+                    <td class="total-wholesale">Q0.00</td>
+                    <td>Q883.00</td>
+                    <td><input type="number" class="qty-distributor" data-price="883.00" value="0" /></td>
+                    <td class="total-distributor">Q0.00</td>
+                </tr>
+                <tr>
+                    <td>12</td>
+                    <td>LG 24GQ40W-B ULTRAGEAR FHD DE 24" 1 MS 165 HZ CON AMD FREESYNC PREMIUM</td>
+                    <td>Q593.00</td>
+                    <td><input type="number" class="qty" data-price="593.00" value="0" /></td>
+                    <td class="total">Q0.00</td>
+                    <td>Q563.00</td>
+                    <td><input type="number" class="qty-wholesale" data-price="563.00" value="0" /></td>
+                    <td class="total-wholesale">Q0.00</td>
+                    <td>Q504.00</td>
+                    <td><input type="number" class="qty-distributor" data-price="504.00" value="0" /></td>
+                    <td class="total-distributor">Q0.00</td>
+                </tr>
+                                
+
+                <!-- Fila de sumatoria -->
+                <tr class="total-row">
+                    <td colspan="3"><strong>Totales</strong></td>
+                    <td class="total-cell" id="sum-qty">0</td>
+                    <td class="total-cell" id="sum-total">Q0.00</td>
+                    <td class="total-cell">-</td>
+                    <td class="total-cell" id="sum-qty-wholesale">0</td>
+                    <td class="total-cell" id="sum-total-wholesale">Q0.00</td>
+                    <td class="total-cell">-</td>
+                    <td class="total-cell" id="sum-qty-distributor">0</td>
+                    <td class="total-cell" id="sum-total-distributor">Q0.00</td>
+                </tr>
+
+                <!-- Fila de IVA -->
+                <tr class="total-iva-row">
+                    <td colspan="3"><strong>IVA 12%</strong></td>
+                    <td class="total-cell"></td>
+                    <td class="total-cell" id="iva-total">Q0.00</td>
+                    <td class="total-cell"></td>
+                    <td class="total-cell"></td>
+                    <td class="total-cell" id="iva-total-wholesale">Q0.00</td>
+                    <td class="total-cell"></td><td class="total-cell"></td>
+                    <td class="total-cell" id="iva-total-distributor">Q0.00</td>
+                </tr>
+
+                <!-- Fila de resumen total -->
+                <tr class="total-summary-row">
+                    <td colspan="3"><strong>Total Final</strong></td>
+                    <td class="total-cell"></td>
+                    <td class="total-cell" id="final-total">Q0.00</td>
+                    <td class="total-cell"></td>
+                    <td class="total-cell"></td>
+                    <td class="total-cell" id="final-total-wholesale">Q0.00</td>
+                    <td class="total-cell"></td>
+					<td class="total-cell"></td>
+                    <td class="total-cell" id="final-total-distributor">Q0.00</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Actualizar los totales
+        const updateTotal = () => {
+            let total = 0;
+            let totalWholesale = 0;
+            let totalDistributor = 0;
+
+            let sumQty = 0;
+            let sumQtyWholesale = 0;
+            let sumQtyDistributor = 0;
+
+            // Para cada fila, obtenemos los valores y calculamos el total
+            document.querySelectorAll('.qty').forEach((input, index) => {
+                const price = parseFloat(input.dataset.price);
+                const qty = parseInt(input.value);
+                const row = input.closest('tr');
+                const totalCell = row.querySelector('.total');
+                const wholesaleInput = row.querySelector('.qty-wholesale');
+                const distributorInput = row.querySelector('.qty-distributor');
+
+                total += price * qty;
+                totalWholesale += parseFloat(wholesaleInput.dataset.price) * parseInt(wholesaleInput.value);
+                totalDistributor += parseFloat(distributorInput.dataset.price) * parseInt(distributorInput.value);
+
+                sumQty += qty;
+                sumQtyWholesale += parseInt(wholesaleInput.value);
+                sumQtyDistributor += parseInt(distributorInput.value);
+
+                totalCell.textContent = `Q${(price * qty).toFixed(2)}`;
+            });
+
+            // Actualizamos las sumas
+            document.getElementById('sum-qty').textContent = sumQty;
+            document.getElementById('sum-total').textContent = `Q${total.toFixed(2)}`;
+            document.getElementById('sum-qty-wholesale').textContent = sumQtyWholesale;
+            document.getElementById('sum-total-wholesale').textContent = `Q${totalWholesale.toFixed(2)}`;
+            document.getElementById('sum-qty-distributor').textContent = sumQtyDistributor;
+            document.getElementById('sum-total-distributor').textContent = `Q${totalDistributor.toFixed(2)}`;
+
+            // Calculamos y actualizamos el IVA
+            const iva = total * 0.12;
+            document.getElementById('iva-total').textContent = `Q${iva.toFixed(2)}`;
+
+            const ivaWholesale = totalWholesale * 0.12;
+            document.getElementById('iva-total-wholesale').textContent = `Q${ivaWholesale.toFixed(2)}`;
+
+            const ivaDistributor = totalDistributor * 0.12;
+            document.getElementById('iva-total-distributor').textContent = `Q${ivaDistributor.toFixed(2)}`;
+
+            // Total final con IVA
+            document.getElementById('final-total').textContent = `Q${(total + iva).toFixed(2)}`;
+            document.getElementById('final-total-wholesale').textContent = `Q${(totalWholesale + ivaWholesale).toFixed(2)}`;
+            document.getElementById('final-total-distributor').textContent = `Q${(totalDistributor + ivaDistributor).toFixed(2)}`;
+        }
+
+        // Agregamos los eventos a los inputs para actualizar los totales cuando cambian
+        document.querySelectorAll('.qty, .qty-wholesale, .qty-distributor').forEach(input => {
+            input.addEventListener('input', updateTotal);
+        });
+
+        // Inicializar los totales
+        updateTotal();
+    </script>
+</body>
+</html>
